@@ -15,6 +15,12 @@ template<class T_config> class Scaler;
 
 #include <amgx_types/util.h>
 
+//// Modified by Silong Li on 20250411 for passing stats
+#if defined(__cplusplus)
+extern "C" 
+#endif
+void return_pass_data(double* setuptime,double* solvetime,int* iter);
+
 namespace amgx
 {
 
@@ -160,6 +166,8 @@ class Solver : public AuxData
 
         // Print the timings.
         void print_timings();
+        //// Modified by Silong Li on 20250411 for passing stats
+        void pass_timings();
         // Print grid stats.
         virtual void print_grid_stats() {}
         virtual void print_grid_stats2() {}
@@ -252,7 +260,8 @@ class Solver : public AuxData
         bool m_monitor_residual;
         bool m_monitor_convergence;
         bool m_store_res_history;
-        bool m_obtain_timings;
+        //// Modified by Silong Li on 20250411 for passing stats
+        int m_obtain_timings;
 
         // Events and time informations.
         cudaEvent_t m_setup_start, m_setup_stop;

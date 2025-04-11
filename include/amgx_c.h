@@ -35,6 +35,10 @@ extern "C" {
 /*********************************************************
 ** These flags turn on output and vis data
 **********************************************************/
+
+//// Modified by Silong Li on 20250411 for passing stats
+void return_pass_data(double* setuptime,double* solvetime,int* iter);
+
 typedef enum
 {
     SOLVE_STATS = 1,

@@ -723,8 +723,8 @@ AMGX_ERROR initialize()
     AMGX_CPU_PROFILER( "initialize " );
     cudaError_t rc;
     std::stringstream info;
-    info << "AMGX version " << __AMGX_BUILD_ID__ << "\n";
-    info << "Built on " << __AMGX_BUILD_DATE__ << ", " << __AMGX_BUILD_TIME__ << "\n";
+    //info << "AMGX version " << __AMGX_BUILD_ID__ << "\n";
+    //info << "Built on " << __AMGX_BUILD_DATE__ << ", " << __AMGX_BUILD_TIME__ << "\n";
     int driver_version = 0, runtime_version = 0;
     rc = cudaDriverGetVersion(&driver_version);
 
@@ -748,9 +748,9 @@ AMGX_ERROR initialize()
     int driver_version_min = (driver_version - (driver_version_maj * 1000)) / 10;
     int runtime_version_maj = runtime_version / 1000;
     int runtime_version_min = (runtime_version - (runtime_version_maj * 1000)) / 10;
-    info << "Compiled with CUDA Runtime " << runtime_version_maj << "." << runtime_version_min << ", using CUDA driver " << driver_version_maj << "." << driver_version_min << "\n";
-    std::stringstream cuda_rt_version;
-    cuda_rt_version << runtime_version_maj << "." << runtime_version_min;
+    //info << "Compiled with CUDA Runtime " << runtime_version_maj << "." << runtime_version_min << ", using CUDA driver " << driver_version_maj << "." << driver_version_min << "\n";
+    //std::stringstream cuda_rt_version;
+    //cuda_rt_version << runtime_version_maj << "." << runtime_version_min;
 #ifdef AMGX_WITH_MPI
     int mpi_initialized = 0;
     MPI_Initialized(&mpi_initialized); // We want to make sure MPI_Init has been called.
@@ -777,7 +777,7 @@ AMGX_ERROR initialize()
     }
     catch (amgx_exception e)
     {
-        std::string buf = "Error initializing amgx core: ";
+        std::string buf = "Error initializing amg core: ";
         amgx_output(buf.c_str(), buf.length());
         amgx_output(e.what(), strlen(e.what()));
         return AMGX_ERR_CORE;

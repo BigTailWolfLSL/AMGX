@@ -20,9 +20,18 @@
 #include <vt_user.h>
 #endif
 
+//// Modified by Silong Li on 20250411 for passing stats
+static double pass_setup_time=0.0;
+static double pass_solve_time=0.0;
+static int pass_num_iters=0;
+void return_pass_data(double* setuptime,double* solvetime,int* iter){
+    *setuptime=pass_setup_time;
+    *solvetime=pass_solve_time;
+    *iter=pass_num_iters;
+}
+
 namespace amgx
 {
-
 template<class TConfig>
 Solver<TConfig>::Solver(AMG_Config &cfg, const std::string &cfg_scope,
                         ThreadManager *tmng) :
@@ -35,7 +44,8 @@ Solver<TConfig>::Solver(AMG_Config &cfg, const std::string &cfg_scope,
     m_print_vis_data = cfg.getParameter<int>("print_vis_data", cfg_scope) != 0;
     m_monitor_residual = cfg.getParameter<int>("monitor_residual", cfg_scope) != 0;
     m_store_res_history = cfg.getParameter<int>("store_res_history", cfg_scope) != 0;
-    m_obtain_timings = cfg.getParameter<int>("obtain_timings", cfg_scope) != 0;
+    //// Modified by Silong Li on 20250411 for passing stats
+    m_obtain_timings = cfg.getParameter<int>("obtain_timings", cfg_scope);
     m_scaling = cfg.getParameter<std::string>("scaling", cfg_scope);
 
     if ( m_scaling.compare("NONE") != 0 ) //create scaler object
@@ -140,12 +150,18 @@ template<class TConfig>
 void Solver<TConfig>::reset_setup_timer()
 {
     m_setup_time = 0.0f;
+    //// Modified by Silong Li on 20250411 for passing stats
+    pass_setup_time= 0.0;
+    pass_num_iters=0;
 }
 
 template<class TConfig>
 void Solver<TConfig>::reset_solve_timer()
 {
     m_solve_time = 0.0f;
+    //// Modified by Silong Li on 20250411 for passing stats
+    pass_solve_time= 0.0;
+    pass_num_iters=0;
 }
 
 // Method to print current norm
@@ -941,7 +957,21 @@ AMGX_STATUS Solver<TConfig>::solve(Vector<TConfig> &b, Vector<TConfig> &x,
     // Print timing results
     if (m_verbosity_level > 2 && m_obtain_timings)
     {
-        print_timings();
+    //// Modified by Silong Li on 20250411 for passing stats
+        switch (m_obtain_timings)
+        {
+        case 1:
+            print_timings();
+            break;
+        case 2:
+            pass_timings();
+            break;
+        case 3:
+            pass_timings();
+            print_timings();
+            break;
+        };
+        //print_timings();
     }
 
     return conv_stat;
@@ -1006,6 +1036,15 @@ void Solver<TConfig>::print_timings()
     ss << "    solve: " << m_solve_time << " s\n";
     ss << "    solve(per iteration): " << ((m_num_iters == 0) ? m_num_iters : m_solve_time / m_num_iters) << " s\n";
     amgx_output(ss.str().c_str(), static_cast<int>(ss.str().length()));
+}
+
+//// Modified by Silong Li on 20250411 for passing stats
+template<class TConfig>
+void Solver<TConfig>::pass_timings()
+{
+    pass_setup_time=m_setup_time;
+    pass_solve_time=m_solve_time;
+    pass_num_iters=m_num_iters;
 }
 
 using std::scientific;
