@@ -37,7 +37,7 @@ AMGX_STATUS AbsoluteConvergence<TConfig>::convergence_update_and_check(const POD
     if (res_converged_rel)
     {
         std::stringstream ss;
-        ss << "Relative residual has reached machine precision" << std::endl;
+        ss << "Machine precision accuracy!" << std::endl;
         amgx_output(ss.str().c_str(), static_cast<int>(ss.str().length()));
         return AMGX_ST_CONVERGED;
     }
