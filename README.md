@@ -211,3 +211,11 @@ See [API reference doc](doc/AMGX_Reference.pdf) for detailed description of the 
   * Information on contributing
   * Information on solver configurations
   * Information on the code and algorithms
+
+## <a name="Modifications"></a> Modifications
+
+As above, this library is originally from NVIDIA opensource library AmgX. Some modifications are applied on it for development:
+
+### Disable the output in Func "initialize()" in "core.cu".
+### The configure parameter "obtain_timings" now is a int rather than a bool. "obtain_timings" =0 disable timings and output; =1 output timings statistic from terminal; =2 output timings statistic from "void return_pass_data(double *setuptime, double *solvetime, int *iter)"; =3 output from both;
+
